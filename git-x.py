@@ -5,15 +5,22 @@ import requests, commands, argparse
 import sys
 
 
+def args(*args,**kwargs):  
+    def _decorator(func):  
+        func.__dict__.setdefault('args', []).insert(0, (args,kwargs))  
+        return func  
+    return _decorator
+
+
 class IssuesCommand(object):
 
-    def list(self, state='open'):
+    @args('state', nargs='?', default='opened', help='state support: [opened closed]')
+    def list(self, state='opened'):
         api, token = gitlab_config()
-        print "api is %s and token is %s" % (api, token)
         headers = {
             'PRIVATE-TOKEN': token
         }
-        r = requests.request('GET', api + '/issues?state=' + ''.join(state), headers=headers)
+        r = requests.request('GET', api + '/issues?state=' + state, headers=headers)
         print r.text
     
 
@@ -44,6 +51,15 @@ def methods_of(obj):
         if callable(getattr(obj, i)) and not i.startswith('_'):  
             result.append((i, getattr(obj, i)))  
     return result
+    
+
+def func_args(func, match_args):  
+    fn_args = []  
+    for args,kwargs in getattr(func, 'args', []):  
+        arg = args[0]  
+        fn_args.append(getattr(match_args, arg))  
+  
+    return fn_args  
 
 
 if __name__ == '__main__':
@@ -68,8 +84,11 @@ if __name__ == '__main__':
             parser.set_defaults(action_kwargs=action_kwargs)
         
     match_args = top_parser.parse_args()
-    match_args.action_fn(match_args.action_kwargs)
     
+    print "match_args:", match_args 
+    fn = match_args.action_fn
+    fn_args = func_args(fn, match_args)
+    fn(*fn_args)
     # it works: python git-x.py issues list
     
     
