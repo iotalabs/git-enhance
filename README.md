@@ -188,8 +188,18 @@ Gitlab命令行工具
 
 ### 参数配置
 
+从git config
+
 - git config gitlab.url http://gitlab_url
 - git config gitlab.token TOKEN
+
+从环境变量
+
+- export GITLAB_SCHEMA=http
+- export GITLAB_TOKEN=TOKEN
+
+> 工具会默认从git config读取remote的origin.url配置,
+> 如果是ssh地址，会自动转换成http[s]地址。
 
 ### 子命令
 
