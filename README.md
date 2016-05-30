@@ -219,13 +219,14 @@ Gitlab命令行工具
 #### Merge Requests
 
 - git gitlab merge list                                                         获取Merge Request列表
-- git gitlab merge create <source branch> <target branch> <assignee> <title>    新建Merge Request
-- git gitlab merge update <merge id> <target branch> <assignee> <title>         更新Merge Request
-- git gitlab merge accept <merge id>                                            接受Merge Request
-- git gitlab merge get summary <merge id>                                       获取Merge Request信息
-- git gitlab merge get commit <merge id>                                        获取Merge Request Comment信息
-- git gitlab merge get change <merge id>                                        获取Merge Request Change信息
-- git gitlab merge get issue <merge id>                                         获取Merge Request Issue列表
+- git gitlab merge create \<source branch\> \<target branch\> \<assignee\> \<title\>    新建Merge Request
+- git gitlab merge update \<merge id\> \<target branch\> \<assignee\> \<title\>         更新Merge Request
+- git gitlab merge accept \<merge id\>                                            接受Merge Request
+- git gitlab merge get summary \<merge id\>                                       获取Merge Request信息
+- git gitlab merge get commit \<merge id\>                                        获取Merge Request Comment信息
+- git gitlab merge get change \<merge id\>                                        获取Merge Request Change信息
+- git gitlab merge get issue \<merge id\>                                         获取Merge Request Issue列表
+
 
 # License
 
