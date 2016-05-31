@@ -4,6 +4,8 @@
 import requests
 import commands
 import argparse
+from prettytable import PrettyTable
+import re
 
 
 def args(*args, **kwargs):
@@ -15,24 +17,41 @@ def args(*args, **kwargs):
 
 class IssuesCommand(object):
 
-    @args('state', nargs='?', default='opened',
-          help='state support: [opened closed]')
-    def list(self, state='opened'):
+    @args('state', nargs='?', help='state support: [opened closed]')
+    def list(self, state=''):
         api, token = gitlab_config()
+        remote_url = current_remote()
+        project_name = re.search(r'git.*/(.*)\.git', remote_url).group(1)
         headers = {
             'PRIVATE-TOKEN': token
         }
+        
+        _project = requests.request('GET',
+                                    api + '/projects/search/' + project_name,
+                                    headers=headers)
+        project_id = _project.json()[0][u'id']
         r = requests.request('GET',
-                             api + '/issues?state=' + state,
+                             '%s/projects/%s/issues?state=%s' % (api, project_id, state),
                              headers=headers)
-        print r.text
+        print_issues(r.json())
+
+
+def print_issues(issues):
+    row = PrettyTable()
+    row.field_names = ['issue id', 'name', 'state']
+    for issue in issues:
+        row.add_row(['#%d' % issue[u'iid'], issue[u'title'], issue[u'state']])
+    print row
 
 
 def current_remote():
     '''
     will return origin url
     '''
-    gitlab_remote = commands.getstatusoutput('git remote -v')
+    gitlab_remote = commands.getstatusoutput('git remote get-url --all origin')
+    if gitlab_remote[0] != 0:
+        raise SystemExit(gitlab_remote[1])
+    return gitlab_remote[1]
 
 
 def gitlab_config():
