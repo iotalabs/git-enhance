@@ -22,7 +22,7 @@ class GitlabHelper(object):
         return _remote[1]
 
     def current_project_id(self):
-        _id = commands.getstatusoutput('git config gitlab.project_id')
+        _id = commands.getstatusoutput('git config gitlab.projectId')
 
         if _id[0] == 0:
             return _id[1]
@@ -33,7 +33,7 @@ class GitlabHelper(object):
 
         for pro in projects:
             if pro[u'ssh_url_to_repo'] == remote_url:
-                commands.getstatusoutput('git config gitlab.project_id %d' % pro[u'id'])
+                commands.getstatusoutput('git config gitlab.projectId %d' % pro[u'id'])
                 return pro[u'id']
 
         raise SystemExit("Failed to get project id")
