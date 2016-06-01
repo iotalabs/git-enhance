@@ -31,10 +31,12 @@ class IssuesCommand(object):
 
 def print_issues(issues):
     row = PrettyTable()
-    row.field_names = ['issue id', 'name', 'state']
+    row.field_names = ['issue id', 'name', 'state', 'assignee', 'labels']
     row.align = 'l'
     for issue in issues:
-        row.add_row(['#%d' % issue[u'iid'], issue[u'title'], issue[u'state']])
+        assignee = issue[u'assignee'] is not None and issue[u'assignee'][u'name'] or ''
+        row.add_row(['#%d' % issue[u'iid'], issue[u'title'],
+                     issue[u'state'], assignee, ','.join(issue[u'labels'])])
     print row
 
 
