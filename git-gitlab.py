@@ -4,29 +4,30 @@
 import requests
 from prettytable import PrettyTable
 import re
-from gitlabConfig import GitlabConfig
+from helper import GitlabHelper
+from api.gitlab_api import GitlabAPI
 from common import args, parse_command
+
+gitlabAPI = GitlabAPI()
+gitlabHelper = GitlabHelper(gitlabAPI)
 
 
 class IssuesCommand(object):
 
     @args('state', nargs='?', help='state support: [opened closed]')
     def list(self, state=''):
-        gitlab = GitlabConfig()
-        remote_url = gitlab.current_remote()
-        project_name = re.search(r'git.*/(.*)\.git', remote_url).group(1)
-        headers = {
-            'PRIVATE-TOKEN': gitlab.token
-        }
 
-        _project = requests.request('GET',
-                                    gitlab.api + '/projects/search/' + project_name,
-                                    headers=headers)
-        project_id = _project.json()[0][u'id']
-        r = requests.request('GET',
-                             '%s/projects/%s/issues?state=%s' % (gitlab.api, project_id, state),
-                             headers=headers)
-        print_issues(r.json())
+        project_id = gitlabHelper.current_project_id()
+        _issues = gitlabAPI.project_issues(project_id)
+        print_issues(_issues)
+
+    @args('issue_id', nargs='?', help='issue id should be exists', type=int)
+    def close(self, issue_id=''):
+        project_id = gitlabHelper.current_project_id()
+        _issues = gitlabAPI.project_issues(project_id)
+        issue = filter(lambda issue: issue[u'iid'] == issue_id, _issues)[0]
+        closed = gitlabAPI.project_issues_close(project_id=project_id, issue_id=issue[u'id'])
+        print 'closed: %s' % (closed[u'state'] == u'closed' and 'Y' or 'N')
 
 
 def print_issues(issues):
