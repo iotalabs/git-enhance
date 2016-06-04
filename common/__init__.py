@@ -26,7 +26,7 @@ def func_args(func, match_args):
         fn_args.append(getattr(match_args, arg))
 
     return fn_args
-    
+
 
 def parse_command(ENHANCES=[]):
     top_parser = argparse.ArgumentParser(prog='top')
