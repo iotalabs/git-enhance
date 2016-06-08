@@ -4,6 +4,10 @@
 import argparse
 
 
+def get_summary(content, count):
+    return content if len(content) < count else u'%s……' % content[0:count]
+
+
 def args(*args, **kwargs):
     def _decorator(func):
         func.__dict__.setdefault('args', []).insert(0, (args, kwargs))

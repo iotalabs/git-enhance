@@ -6,7 +6,7 @@ from prettytable import PrettyTable
 import re
 from helper import GitlabHelper
 from api.gitlab_api import GitlabAPI
-from common import args, parse_command
+from common import args, parse_command, get_summary
 
 gitlabAPI = GitlabAPI()
 gitlabHelper = GitlabHelper(gitlabAPI)
@@ -36,8 +36,11 @@ def print_issues(issues):
     row.align = 'l'
     for issue in issues:
         assignee = issue[u'assignee'] is not None and issue[u'assignee'][u'name'] or ''
-        row.add_row(['#%d' % issue[u'iid'], issue[u'title'],
-                     issue[u'state'], assignee, ','.join(issue[u'labels'])])
+        row.add_row(['#%d' % issue[u'iid'],
+                     get_summary(issue['title'], 40),
+                     issue[u'state'],
+                     assignee,
+                     ','.join(issue[u'labels'])])
     print row
 
 
