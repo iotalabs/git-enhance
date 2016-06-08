@@ -18,7 +18,7 @@ class IssuesCommand(object):
     def list(self, state=''):
 
         project_id = gitlabHelper.current_project_id()
-        _issues = gitlabAPI.project_issues(project_id)
+        _issues = gitlabAPI.project_issues(project_id, state=state)
         print_issues(_issues)
 
     @args('issue_id', nargs='?', help='issue id should be exists', type=int)
